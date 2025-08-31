@@ -1,9 +1,19 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, serializers
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
+from django.core.cache import cache
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from .models import User
-from .serializers import LoginSerializer, RegisterSerializer
+from .serializers import (
+    LoginSerializer,
+    PasswordResetRequestSerializer,
+    PasswordResetSerializer,
+    RegisterSerializer,
+)
+
+RECOVERY_KEY = "recovery::"
+RECOVERY_KEY_EXP = 60 * 10
 
 
 class RegisterView(generics.CreateAPIView):
@@ -50,3 +60,53 @@ class LoginView(generics.GenericAPIView):
                 },
             }
         )
+
+
+class RequestTokenView(generics.GenericAPIView):
+    serializer_class = PasswordResetRequestSerializer
+    permission_classes = [AllowAny]
+    message = "Password reset initialized"
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.user
+
+        token = None
+        if user:
+            token_generator = PasswordResetTokenGenerator()
+            token = token_generator.make_token(user)
+
+            key = f"{RECOVERY_KEY}{token}"
+            cache.set(key, user.email, RECOVERY_KEY_EXP)
+
+        return Response({"token": token}, status.HTTP_200_OK)
+
+
+class ResetView(generics.GenericAPIView):
+    serializer_class = PasswordResetSerializer
+    permission_classes = []
+    message = "Password reset successful"
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        token = serializer.validated_data["token"]
+        password = serializer.validated_data["password"]
+
+        key = f"{RECOVERY_KEY}{token}"
+        email = cache.get(key)
+
+        if not email:
+            raise serializers.ValidationError("Invalid or expired token.")
+
+        user = User.objects.filter(email=email).first()
+        if not user:
+            raise serializers.ValidationError("User not found.")
+
+        user.set_password(password)
+        user.save()
+
+        cache.delete(key)
+        return Response(status.HTTP_200_OK)

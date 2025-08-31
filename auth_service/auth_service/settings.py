@@ -27,7 +27,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 SECRET_KEY = "django-insecure-l@lli$^otf1v#6rn@d7bx$)2oa(&=7e*3=bhylr^1bb=ih!1ov"
 
 
-DEBUG = True
+DEBUG = env("DEBUG") == "True"
 
 ALLOWED_HOSTS = []
 
@@ -125,7 +125,7 @@ REST_FRAMEWORK = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": env("REDIS_URL"),
         "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
     }
 }

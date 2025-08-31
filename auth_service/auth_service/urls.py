@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
-from accounts.views import RegisterView, LoginView
+from accounts.views import RegisterView, LoginView, RequestTokenView, ResetView
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
@@ -16,6 +16,8 @@ schema_view = get_schema_view(
 urlpatterns = [
     path("api/register/", RegisterView.as_view()),
     path("api/login/", LoginView.as_view()),
+    path("api/request-recovery", RequestTokenView.as_view()),
+    path("api/reset", ResetView.as_view()),
     path("api/token/refresh/", TokenRefreshView.as_view()),
     path(
         "docs/",
