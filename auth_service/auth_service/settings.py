@@ -114,7 +114,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-    )
+    ),
+    "EXCEPTION_HANDLER": "auth_service.utils.exceptions.custom_exception_handler",
+    "DEFAULT_RENDERER_CLASSES": [
+        "auth_service.utils.renderers.CustomAPIRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",
+    ],
 }
 
 CACHES = {

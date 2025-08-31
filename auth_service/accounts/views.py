@@ -3,7 +3,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from .models import User
-from .serializers import RegisterSerializer
+from .serializers import LoginSerializer, RegisterSerializer
 
 
 class RegisterView(generics.CreateAPIView):
@@ -11,32 +11,42 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        self.perform_create(serializer)
+        return Response(
+            {
+                "status": True,
+                "msg": "Registration successful",
+                "data": serializer.data,
+            },
+            status.HTTP_201_CREATED,
+        )
+
 
 class LoginView(generics.GenericAPIView):
-    serializer_class = RegisterSerializer
+    serializer_class = LoginSerializer
     permission_classes = [AllowAny]
+    message = "Login Successful"
 
     def post(self, request, *args, **kwargs):
-        email = request.data.get("email")
-        password = request.data.get("password")
+        serializer = self.get_serializer(data=request.data)
 
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            return Response(
-                {"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST
-            )
+        serializer.is_valid(raise_exception=True)
 
-        if not user.check_password(password):
-            return Response(
-                {"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST
-            )
+        user = serializer.user
 
         refresh = RefreshToken.for_user(user)
         return Response(
             {
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
-            },
-            status=status.HTTP_200_OK,
+                "user": {
+                    "id": user.id,
+                    "email": user.email,
+                    "username": user.username,
+                },
+            }
         )
