@@ -1,3 +1,5 @@
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from rest_framework import generics, status, serializers
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -16,6 +18,12 @@ RECOVERY_KEY = "recovery::"
 RECOVERY_KEY_EXP = 60 * 10
 
 
+@swagger_auto_schema(
+    operation_summary="Register a new user",
+    operation_description="This endpoint allows new users to register with email, username, and password.",
+    responses={201: openapi.Response("Registration successful")},
+    security=[],
+)
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
@@ -39,8 +47,14 @@ class RegisterView(generics.CreateAPIView):
 class LoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
     permission_classes = [AllowAny]
-    message = "Login Successful"
+    message = "Login successful"
 
+    @swagger_auto_schema(
+        operation_description="Login with email and password.",
+        request_body=LoginSerializer,
+        responses={200: openapi.Response("Login successful")},
+        security=[],
+    )
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
 
@@ -67,6 +81,12 @@ class RequestTokenView(generics.GenericAPIView):
     permission_classes = [AllowAny]
     message = "Password reset initialized"
 
+    @swagger_auto_schema(
+        operation_description="Request a password reset token using email address.",
+        request_body=PasswordResetRequestSerializer,
+        responses={200: openapi.Response("Password reset initialized")},
+        security=[],
+    )
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -88,6 +108,12 @@ class ResetView(generics.GenericAPIView):
     permission_classes = []
     message = "Password reset successful"
 
+    @swagger_auto_schema(
+        operation_description="Reset password with token and new password.",
+        request_body=PasswordResetSerializer,
+        responses={200: openapi.Response("Password reset successful")},
+        security=[],
+    )
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
