@@ -1,6 +1,8 @@
 django
 djangorestframework
-simplejwt
+djangorestframework-simplejwt
 psycopg2-binary
 django-redis
-drf-yasg
+drf-yasg[swagger]
+dj-database-url
+django-environ
