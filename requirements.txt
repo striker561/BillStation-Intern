@@ -3,6 +3,7 @@ djangorestframework
 djangorestframework-simplejwt
 psycopg2-binary
 django-redis
-drf-yasg[swagger]
+drf-yasg
 dj-database-url
 django-environ
+gunicorn

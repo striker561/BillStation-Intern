@@ -1,13 +1,9 @@
 from rest_framework import serializers
 
-from auth_service.serializers.base import (
-    BaseModelSerializer,
-    BaseSerializer,
-)
 from .models import User
 
 
-class RegisterSerializer(BaseModelSerializer):
+class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "email", "username", "password"]
@@ -18,7 +14,7 @@ class RegisterSerializer(BaseModelSerializer):
         return user
 
 
-class LoginSerializer(BaseSerializer):
+class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     password = serializers.CharField(
         write_only=True,
@@ -39,7 +35,7 @@ class LoginSerializer(BaseSerializer):
         return data
 
 
-class PasswordResetRequestSerializer(BaseSerializer):
+class PasswordResetRequestSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
 
     def validate(self, data):
@@ -52,7 +48,7 @@ class PasswordResetRequestSerializer(BaseSerializer):
         return data
 
 
-class PasswordResetSerializer(BaseSerializer):
+class PasswordResetSerializer(serializers.Serializer):
     token = serializers.CharField(
         write_only=True,
         required=True,

@@ -1,3 +1,4 @@
+import uuid
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework import generics, status, serializers
@@ -5,7 +6,6 @@ from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from django.core.cache import cache
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from .models import User
 from .serializers import (
     LoginSerializer,
@@ -94,8 +94,7 @@ class RequestTokenView(generics.GenericAPIView):
 
         token = None
         if user:
-            token_generator = PasswordResetTokenGenerator()
-            token = token_generator.make_token(user)
+            token = uuid.uuid4().hex
 
             key = f"{RECOVERY_KEY}{token}"
             cache.set(key, user.email, RECOVERY_KEY_EXP)

@@ -24,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 
-SECRET_KEY = "django-insecure-l@lli$^otf1v#6rn@d7bx$)2oa(&=7e*3=bhylr^1bb=ih!1ov"
+SECRET_KEY = env("SECRET_KEY")
 
 
 DEBUG = env("DEBUG") == "True"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 INSTALLED_APPS = [
@@ -139,3 +139,5 @@ SWAGGER_SETTINGS = {
 
 
 AUTH_USER_MODEL = "accounts.User"
+
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
