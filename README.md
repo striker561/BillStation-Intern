@@ -87,17 +87,11 @@ If using a **Procfile** (Heroku/Railway style):
 web: gunicorn auth_service.wsgi:application --bind 0.0.0.0:$PORT
 ```
 
-### Static Files (Optional but Recommended)
+## 🐳 Run with Docker
 
-Even for a pure API, Django Admin needs static files.  
-Add this in `settings.py`:
+This service includes a `Dockerfile` and `docker-compose.yml` for easy containerized setup.
 
-```python
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-```
-
-Then before deploying, run:
+### Build and Run
 
 ```bash
-python manage.py collectstatic --noinput
-```
+docker-compose up --build

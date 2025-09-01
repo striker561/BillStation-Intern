@@ -7,3 +7,4 @@ drf-yasg
 dj-database-url
 django-environ
 gunicorn
+whitenoise
