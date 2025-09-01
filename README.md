@@ -11,7 +11,7 @@ It provides user registration, login with JWT, password reset with Redis, and de
 - **Custom User model** with email as username for modern auth workflows.
 - **JWT authentication** (via `rest_framework_simplejwt`) for secure stateless login.
 - **Password reset with Redis**:
-  - Reset tokens cached for 10 minutes.
+  - Reset tokens cached for 10 minutes, token is returned to the endpoint for demo purposes.
   - Password securely updated after token verification.
 - **Swagger/OpenAPI docs** (via `drf_yasg`) for easy API exploration.
 - **Custom response format** using DRF renderers & exception handlers for a more friendly api response.
