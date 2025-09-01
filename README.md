@@ -39,13 +39,19 @@ REDIS_URL=redis://localhost:6379/0
    pip install -r requirements.txt
    ```
 
-2. Run migrations:
+2. Enter the Auth Service Directory
+
+    ```bash
+    cd auth_service
+    ```
+
+3. Run migrations:
 
    ```bash
    python manage.py migrate
    ```
 
-3. Start development server:
+4. Start development server:
 
    ```bash
    python manage.py runserver
@@ -57,8 +63,8 @@ REDIS_URL=redis://localhost:6379/0
 
 - **Register:** `POST /api/register/`
 - **Login (JWT):** `POST /api/login/`
-- **Request password reset:** `POST /api/password-reset/request/`
-- **Reset password:** `POST /api/password-reset/`
+- **Request password reset:** `POST /api/request-recovery/`
+- **Reset password:** `POST /api/reset/`
 
 Swagger UI available at:
 
@@ -87,9 +93,11 @@ If using a **Procfile** (Heroku/Railway style):
 web: gunicorn auth_service.wsgi:application --bind 0.0.0.0:$PORT
 ```
 
+$PORT = 8000
+
 ## 🐳 Run with Docker
 
-This service includes a `Dockerfile` and `docker-compose.yml` for easy containerized setup.
+This service includes a `Dockerfile` and `docker-compose.yml` for easy local containerized setup.
 
 ### Build and Run
 
