@@ -1,11 +1,13 @@
 import uuid
-from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from rest_framework import generics, status, serializers
-from rest_framework.permissions import AllowAny
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.response import Response
 from django.core.cache import cache
+from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework.permissions import AllowAny
+from rest_framework import generics, status, serializers
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from .throttles import LoginThrottle, PasswordResetThrottle
 from .models import User
 from .serializers import (
     LoginSerializer,
@@ -47,6 +49,7 @@ class RegisterView(generics.CreateAPIView):
 class LoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
     permission_classes = [AllowAny]
+    throttle_classes = [LoginThrottle]
     message = "Login successful"
 
     @swagger_auto_schema(
@@ -79,6 +82,7 @@ class LoginView(generics.GenericAPIView):
 class RequestTokenView(generics.GenericAPIView):
     serializer_class = PasswordResetRequestSerializer
     permission_classes = [AllowAny]
+    throttle_classes = [PasswordResetThrottle]
     message = "Password reset initialized"
 
     @swagger_auto_schema(

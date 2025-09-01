@@ -121,7 +121,24 @@ REST_FRAMEWORK = {
         "auth_service.utils.renderers.CustomAPIRenderer",
         "rest_framework.renderers.BrowsableAPIRenderer",
     ],
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.UserRateThrottle",
+        "rest_framework.throttling.AnonRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "20/minute",
+        "user": "100/minute",
+    },
+    "DEFAULT_CACHE": "default",
 }
+
+REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"].update(
+    {
+        "login": "5/minute",
+        "password_reset": "2/minute",
+    }
+)
+
 
 CACHES = {
     "default": {
